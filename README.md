@@ -17,7 +17,7 @@ Things you will need to compile TypeScript and run the program in your browser:
 - http-server
 - Python 3
 
-1) Install nvm (Node Version Manager)
+### 1) Install nvm (Node Version Manager)
 
 Run the official installer:
 ```bash
@@ -35,7 +35,7 @@ command -v nvm
 nvm --version
 ```
 
-2) Install Node (LTS)
+### 2) Install Node (LTS)
 Install and use the latest LTS version:
 ```bash
 nvm install --lts
@@ -50,7 +50,7 @@ If you want to make LTS the defualt node that nvm uses:
 nvm alias default 'lts/*'
 ```
 
-3) Install required global tools
+### 3) Install required global tools
 Install the TypeScript compiler and a local HTTP server:
 ```bash
 npm install -g typescript http-server
@@ -62,16 +62,16 @@ http-server -v
 
 From the project root:
 
-1) Build the web bundle:
+### 1) Build the web bundle:
 ```bash
 python3 make-menger.py
 ```
 This compiles the TypeScript sources in src/ and produces the runnable site in dist/.
 
-2) Start the local server:
+### 2) Start the local server:
 ```bash
 http-server dist -c-1
 ```
 
-3) Open the port in your browser:
+### 3) Open the port in your browser:
 [http://127.0.0.1:8080](http://127.0.0.1:8080)
