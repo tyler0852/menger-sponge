@@ -158,6 +158,26 @@ export class GUI implements IGUI {
 
     switch (key.code) {
       case "KeyW": {
+        console.log("Key : W was pressed.");
+
+        const eye = this.camera.pos();
+        const center = this.camera.target();
+
+        //const lookDir = Vec3.subtract(center, eye);
+        const lookDir = center.copy();
+        lookDir.subtract(eye);
+        lookDir.normalize();
+
+        lookDir.scale(GUI.zoomSpeed);
+
+        eye.add(lookDir);
+        center.add(lookDir);
+
+        //this.camera.setPosition(eye);
+        //this.camera.setTarget(center);
+        this.camera.pos().copy(eye);
+        this.camera.target().copy(center);
+        
 
         break;
       }
