@@ -135,7 +135,21 @@ export class GUI implements IGUI {
    * @param mouse
    */
   public drag(mouse: MouseEvent): void {
-	  
+    if (!this.dragging) return;
+
+    const dx = mouse.screenX - this.prevX; // mouse movement delta
+    const dy = mouse.screenY - this.prevY;
+
+    this.prevX = mouse.screenX;
+    this.prevY = mouse.screenY; // update previous mouse position
+
+    const rotationSpeed = GUI.rotationSpeed; 
+    // I think this is way too fast so multiply both by 0.1 to make it easier to control
+    const yawAngle = -dx*rotationSpeed;
+    const pitchAngle = -dy*rotationSpeed;
+
+    if (yawAngle !== 0) this.camera.yaw(Math.abs(yawAngle), yawAngle>0);
+    if (pitchAngle !==0) this.camera.pitch(Math.abs(pitchAngle), pitchAngle>0);
 	  // TODO: Your code here for left and right mouse drag
 	  
   }
