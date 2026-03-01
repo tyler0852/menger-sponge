@@ -57,6 +57,7 @@ export class GUI implements IGUI {
     this.animation = animation;
 
 	this.reset();
+    console.log("RESET CALLED");
 
     this.registerEventListeners(canvas);
   }
@@ -69,13 +70,17 @@ export class GUI implements IGUI {
     this.dragging = false;
     /* Create camera setup */
     this.camera = new Camera(
-      new Vec3([0, 0, -6]),
-      new Vec3([0, 0, 0]),
-      new Vec3([0, 1, 0]),
+      new Vec3([0, 0, -6]),// eye = pos
+      new Vec3([0, 0, 0]), // center = target
+      new Vec3([0, 1, 0]), // up
       45,
       this.width / this.height,
       0.1,
       1000.0
+      // center = eye + d*look
+      // look = normalize(center - eye) // might be negative this
+      // d = length(center - eye)
+      // right = look x up
     );
   }
 
@@ -84,13 +89,17 @@ export class GUI implements IGUI {
    * @param cam a new camera
    */
   public setCamera(
-    pos: Vec3,
-    target: Vec3,
-    upDir: Vec3,
+    pos: Vec3, // eye = pos
+    target: Vec3, // center = target?
+    upDir: Vec3,  // up
     fov: number,
     aspect: number,
     zNear: number,
     zFar: number
+    // center = eye + d*look
+    // lookDir = normalize(eye - center) // might be negative this
+    // d = length(center - eye)
+    // right = look x up
   ) {
     this.camera = new Camera(pos, target, upDir, fov, aspect, zNear, zFar);
   }
@@ -160,36 +169,70 @@ export class GUI implements IGUI {
       case "KeyW": {
         console.log("Key : W was pressed.");
 
-        const eye = this.camera.pos();
-        const center = this.camera.target();
-
-        //const lookDir = Vec3.subtract(center, eye);
-        const lookDir = center.copy();
-        lookDir.subtract(eye);
+        const lookDir = this.camera.target().copy(); // lookDir = normalize(center-eye)
+        lookDir.subtract(this.camera.pos());
         lookDir.normalize();
-
         lookDir.scale(GUI.zoomSpeed);
-
-        eye.add(lookDir);
-        center.add(lookDir);
-
-        //this.camera.setPosition(eye);
-        //this.camera.setTarget(center);
-        this.camera.pos().copy(eye);
-        this.camera.target().copy(center);
         
+        const eye = this.camera.pos().copy();
+        eye.add(lookDir);
+        this.camera.setPos(eye); // scale eye by zoomSpeed*lookDir
+
+        const center = this.camera.target().copy();
+        center.add(lookDir);
+        this.camera.setTarget(center); // scale center by zoomSPeed*lookDir
 
         break;
       }
       case "KeyA": {
+        console.log("Key : A was pressed.");
+
+        const lookDir = this.camera.target().copy(); // lookDir = normalize(center-eye)
+        lookDir.subtract(this.camera.pos());
+        lookDir.normalize();
+
+        const right = Vec3.cross(this.camera.up(), lookDir); //right = look x up
+        right.normalize(); 
+        right.scale(GUI.panSpeed);
+
+        const eye = this.camera.pos().copy();
+        eye.subtract(right);
+        this.camera.setPos(eye); // translate eye by -panSpeed*tanDir
 
         break;
       }
       case "KeyS": {
+        console.log("Key : S was pressed.");
+
+        const lookDir = this.camera.target().copy(); // lookDir = normalize(center-eye)
+        lookDir.subtract(this.camera.pos());
+        lookDir.normalize();
+        lookDir.scale(GUI.zoomSpeed);
+        
+        const eye = this.camera.pos().copy();
+        eye.subtract(lookDir);
+        this.camera.setPos(eye); // scale eye by -zoomSpeed*lookDir
+
+        const center = this.camera.target().copy();
+        center.subtract(lookDir);
+        this.camera.setTarget(center); // scale center by -zoomSPeed*lookDir
 
         break;
       }
       case "KeyD": {
+        console.log("Key : D was pressed.");
+
+        const lookDir = this.camera.target().copy(); // lookDir = normalize(center-eye)
+        lookDir.subtract(this.camera.pos());
+        lookDir.normalize();
+
+        const right = Vec3.cross(this.camera.up(), lookDir); //right = look x up
+        right.normalize(); 
+        right.scale(GUI.panSpeed);
+
+        const eye = this.camera.pos().copy();
+        eye.add(right);
+        this.camera.setPos(eye); // translate eye by panSpeed*tanDir
 
         break;
       }
