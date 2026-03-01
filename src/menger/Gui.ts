@@ -241,18 +241,40 @@ export class GUI implements IGUI {
         break;
       }
       case "ArrowLeft": {
+        console.log("Key : Left Arrow was pressed.");
+        this.camera.roll(GUI.rollSpeed, false); // left = counterclockwise (false)
 
         break;
       }
       case "ArrowRight": {
+        console.log("Key : Right Arrow was pressed.");
+        this.camera.roll(GUI.rollSpeed, true); // right = clockwise (true)
 
         break;
       }
       case "ArrowUp": {
+        console.log("Key : Up Arrow was pressed.");
+
+        const up = this.camera.up().copy();
+        up.scale(GUI.panSpeed)
+
+        const eye = this.camera.pos().copy();
+        eye.add(up);
+
+        this.camera.setPos(eye); // translate eye by panSpeed*upDir
 
         break;
       }
       case "ArrowDown": {
+        console.log("Key : Down Arrow was pressed.");
+
+        const up = this.camera.up().copy();
+        up.scale(GUI.panSpeed)
+
+        const eye = this.camera.pos().copy();
+        eye.subtract(up);
+
+        this.camera.setPos(eye); // translate eye by -panSpeed*upDir
 
         break;
       }
